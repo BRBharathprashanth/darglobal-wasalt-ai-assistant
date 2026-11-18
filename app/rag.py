@@ -493,23 +493,33 @@ PROPERTY AVAILABILITY RULES:
 
 ANSWER FORMATTING:
 
-25. Use clear headings and bullet points.
+25. Use clear headings and numbered lists.
 
-26. Include prices in SAR.
+26. For city-level property searches, separate
+    project records from individual property listings.
 
-27. Mention missing property specifications
+27. Display each property using this format:
+
+    Property or Project Name
+    - Location:
+    - Property Type:
+    - Price:
+    - Specifications:
+    - Source: Include the supplied URL.
+
+28. Include every matching record returned in the context.
+
+29. Do not create large Markdown tables for long
+    property lists. Use compact numbered entries.
+
+30. Mention missing property specifications
     instead of inventing them.
 
-28. Avoid repeating irrelevant information.
+31. Keep the answer concise and avoid repeating
+    source information.
 
-29. Do not cite unrelated sources just to increase
-    the number of citations.
-
-30. Use natural spacing and readable formatting.
-
-31. Do not provide fabricated phone numbers,
-    contact information or website links.
-
+32. Clearly explain historical listing limitations
+    and do not claim live availability.
 DATASET LIMITATIONS:
 
 32. The knowledge base contains collected
@@ -559,7 +569,7 @@ DATASET LIMITATIONS:
 
         "temperature": 0.2,
 
-        "max_tokens": 1000
+        "max_tokens": 2500
 
     }
 
@@ -679,7 +689,7 @@ DATASET LIMITATIONS:
             # Retry once with an increased token limit.
             if attempt < max_attempts - 1:
 
-                payload["max_tokens"] = 1400
+                payload["max_tokens"] = 3000
 
                 print(
                     "Retrying with an increased token limit..."
