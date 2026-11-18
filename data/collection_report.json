@@ -1,0 +1,13 @@
+{
+  "collection_method": "Content supplied by the user from copied website pages and an attached Wasalt sale-listing extract",
+  "live_automated_scrape_performed": false,
+  "darglobal_project_records": 41,
+  "wasalt_sample_listing_records": 21,
+  "wasalt_sample_project_records": 9,
+  "rag_documents": 77,
+  "limitations": [
+    "This is a structured seed dataset, not a verified live crawl.",
+    "The individual Wasalt listing URLs were not included in the supplied extract.",
+    "Prices and availability are snapshots and should be refreshed before use."
+  ]
+}

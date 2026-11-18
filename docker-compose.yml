@@ -1,0 +1,20 @@
+
+services:
+  assistant:
+    build: .
+    container_name: darglobal-wasalt-assistant
+
+    ports:
+      - "8501:8501"
+      - "8000:8000"
+
+    env_file:
+      - .env
+
+    environment:
+      API_URL: http://127.0.0.1:8000/chat
+
+    volumes:
+      - ./data:/app/data
+
+    restart: unless-stopped

@@ -1,0 +1,360 @@
+{
+  "source": "Wasalt",
+  "source_type": "user_supplied_website_text_and_attached_listing_extract",
+  "source_url": "https://wasalt.sa/en/",
+  "company": {
+    "name": "Wasalt",
+    "description": "Saudi-based AI-backed real estate platform for verified properties and trusted brokers.",
+    "services": [
+      "Buy",
+      "Rent",
+      "Sell",
+      "Projects",
+      "Daily Rentals",
+      "Auctions",
+      "Barter",
+      "Get Matched"
+    ],
+    "licenses": [
+      {
+        "authority": "REGA",
+        "number": "1200016591"
+      },
+      {
+        "authority": "Ministry of Tourism",
+        "number": "73106008"
+      }
+    ],
+    "commercial_registration_number": "7017195509",
+    "phone": "8001233227",
+    "address": "3rd floor, Makkah Al Mukarramah Rd, Al Wizarat, Riyadh 12622, Saudi Arabia",
+    "reported_registered_users": "705k+",
+    "reported_monthly_active_users": "386k+",
+    "products": [
+      {
+        "name": "Wasalt Search",
+        "description": "AI-backed search for verified properties, projects, masterplans and online auctions."
+      },
+      {
+        "name": "Wasalt Auctions",
+        "description": "Online and hybrid real estate auctions, including movable assets according to supplied text."
+      },
+      {
+        "name": "Projects & masterplans",
+        "description": "Discover investment opportunities and reserve plots online."
+      },
+      {
+        "name": "Wasalt Business",
+        "description": "CRM app for brokers to manage listings, leads, tasks and teams."
+      }
+    ]
+  },
+  "market_coverage": {
+    "cities": [
+      "Riyadh",
+      "Jeddah",
+      "Makkah",
+      "Madinah",
+      "Dammam",
+      "Al Khobar",
+      "Khamis Mushayt",
+      "Abha",
+      "Taif",
+      "Buraidah"
+    ],
+    "property_types": [
+      "Apartments",
+      "Villas",
+      "Land",
+      "Buildings",
+      "Floors",
+      "Duplexes",
+      "Commercial spaces"
+    ],
+    "transaction_types": [
+      "Sale",
+      "Rent",
+      "Daily rental",
+      "Auction",
+      "Barter"
+    ]
+  },
+  "sample_listings": [
+    {
+      "title": "Apartment with 3 Bedrooms",
+      "location": "Al Faiha|A, South Jeddah, Jeddah",
+      "price_sar": 340000,
+      "bedrooms": 3,
+      "bathrooms": null,
+      "area_sqm": null,
+      "listing_type": "sale"
+    },
+    {
+      "title": "Apartment with 3 Bedrooms",
+      "location": "Al Yaqoot, North Jeddah, Jeddah",
+      "price_sar": 299000,
+      "bedrooms": 3,
+      "bathrooms": 2,
+      "area_sqm": null,
+      "listing_type": "sale"
+    },
+    {
+      "title": "Apartment with 2 Bedrooms",
+      "location": "Al Bawadi, North Jeddah, Jeddah",
+      "price_sar": 280000,
+      "bedrooms": 2,
+      "bathrooms": 2,
+      "area_sqm": null,
+      "listing_type": "sale"
+    },
+    {
+      "title": "Apartment with 3 Bedrooms",
+      "location": "Al Safa, North Jeddah, Jeddah",
+      "price_sar": 349000,
+      "bedrooms": 3,
+      "bathrooms": 3,
+      "area_sqm": null,
+      "listing_type": "sale"
+    },
+    {
+      "title": "Apartment with 2 Bedrooms",
+      "location": "Al Safa, North Jeddah, Jeddah",
+      "price_sar": 276000,
+      "bedrooms": 2,
+      "bathrooms": 2,
+      "area_sqm": null,
+      "listing_type": "sale"
+    },
+    {
+      "title": "Villa 210 SQM Facing South on 15m Width Street",
+      "location": "Al-Arid, North Riyadh, Riyadh",
+      "price_sar": 1900000,
+      "bedrooms": 7,
+      "bathrooms": 6,
+      "area_sqm": 210,
+      "listing_type": "sale"
+    },
+    {
+      "title": "Building 480 SQM with 4 Floors Facing South",
+      "location": "Al Safa, North Jeddah, Jeddah",
+      "price_sar": 3000000,
+      "bedrooms": null,
+      "bathrooms": null,
+      "area_sqm": 480,
+      "listing_type": "sale"
+    },
+    {
+      "title": "Apartment",
+      "location": "Al Salamah, North Jeddah, Jeddah",
+      "price_sar": 620000,
+      "bedrooms": 3,
+      "bathrooms": null,
+      "area_sqm": null,
+      "listing_type": "sale"
+    },
+    {
+      "title": "Apartment with 3 Bedrooms",
+      "location": "Al Nahdah, North Jeddah, Jeddah",
+      "price_sar": 667000,
+      "bedrooms": 3,
+      "bathrooms": 3,
+      "area_sqm": null,
+      "listing_type": "sale"
+    },
+    {
+      "title": "Land 450 SQM Facing North on 15m Width Street",
+      "location": "Al-Mahdiyah, West Riyadh, Riyadh",
+      "price_sar": 1450000,
+      "bedrooms": null,
+      "bathrooms": null,
+      "area_sqm": 450,
+      "listing_type": "sale"
+    },
+    {
+      "title": "Land 649.95 SQM Facing West on 14m Width Street",
+      "location": "Al Khudra, Madinah",
+      "price_sar": 550507,
+      "bedrooms": null,
+      "bathrooms": null,
+      "area_sqm": 649.95,
+      "listing_type": "sale"
+    },
+    {
+      "title": "Land 337.5 SQM Facing East on 30m Width Street",
+      "location": "Ar Rayyan, Al-Zulfi",
+      "price_sar": 100237,
+      "bedrooms": null,
+      "bathrooms": null,
+      "area_sqm": 337.5,
+      "listing_type": "sale"
+    },
+    {
+      "title": "Land 493.12 SQM Facing South on 20m Width Street",
+      "location": "Al-Mahdiyah, West Riyadh, Riyadh",
+      "price_sar": 2219040,
+      "bedrooms": null,
+      "bathrooms": null,
+      "area_sqm": 493.12,
+      "listing_type": "sale"
+    },
+    {
+      "title": "Land 600 SQM Facing East on 60m Width Street",
+      "location": "Al Sawari, Khobar",
+      "price_sar": 1920000,
+      "bedrooms": null,
+      "bathrooms": null,
+      "area_sqm": 600,
+      "listing_type": "sale"
+    },
+    {
+      "title": "Land 375 SQM Facing South on 15m Width Street",
+      "location": "Al-Khear, North Riyadh, Riyadh",
+      "price_sar": 380250,
+      "bedrooms": null,
+      "bathrooms": null,
+      "area_sqm": 375,
+      "listing_type": "sale"
+    },
+    {
+      "title": "Land 600 SQM Facing West on 25m Width Street",
+      "location": "Al-Safwa, North Jeddah, Jeddah",
+      "price_sar": 270000000,
+      "bedrooms": null,
+      "bathrooms": null,
+      "area_sqm": 600,
+      "listing_type": "sale"
+    },
+    {
+      "title": "Land 1125 SQM Facing East on 20m Width Street",
+      "location": "Al-Nakheel, North Riyadh, Riyadh",
+      "price_sar": 11250000,
+      "bedrooms": null,
+      "bathrooms": null,
+      "area_sqm": 1125,
+      "listing_type": "sale"
+    },
+    {
+      "title": "Land 416 SQM Facing North East on 15m Width Street",
+      "location": "Al-Wadi, North Riyadh, Riyadh",
+      "price_sar": 3200000,
+      "bedrooms": null,
+      "bathrooms": null,
+      "area_sqm": 416,
+      "listing_type": "sale"
+    },
+    {
+      "title": "Land 230.722 SQM Facing North East on 15m Width Street",
+      "location": "Al-Fawarah, Alfawaruh",
+      "price_sar": 23533,
+      "bedrooms": null,
+      "bathrooms": null,
+      "area_sqm": 230.722,
+      "listing_type": "sale"
+    },
+    {
+      "title": "Floor 412 SQM with 4 Bedrooms",
+      "location": "Hayy Al-Wa'Irah, Madinah",
+      "price_sar": 450000,
+      "bedrooms": 4,
+      "bathrooms": null,
+      "area_sqm": 412,
+      "listing_type": "sale"
+    },
+    {
+      "title": "Villa 341 SQM Facing South on 15m Width Street",
+      "location": "Al-Murooj, Samith",
+      "price_sar": 970000,
+      "bedrooms": 7,
+      "bathrooms": null,
+      "area_sqm": 341,
+      "listing_type": "sale"
+    }
+  ],
+  "sample_projects": [
+    {
+      "name": "Shams Al Riyadh",
+      "location": "Al Rihab, East, Riyadh",
+      "price_range_sar": "2.40M - 135.05M",
+      "units_available": 47
+    },
+    {
+      "name": "مشروع مشيد 10",
+      "location": "Qurtubah, East, Riyadh",
+      "type": "Apartment",
+      "starting_price_sar": "1.06M"
+    },
+    {
+      "name": "مشروع ستة أميال - أدوار للبيع",
+      "location": "Al-Faruq, Center, Riyadh",
+      "type": "Floor",
+      "starting_price_sar": "750K"
+    },
+    {
+      "name": "مشروع أميليا ريزيدنس",
+      "location": "Al Khayf, Madinah",
+      "type": "Apartment",
+      "starting_price_sar": "699K"
+    },
+    {
+      "name": "كوريو",
+      "location": "An-Nada, North, Riyadh",
+      "type": "Apartment",
+      "starting_price_sar": "2.18M"
+    },
+    {
+      "name": "مشروع عين أسس - شقق للبيع",
+      "location": "An-Nada, North, Riyadh",
+      "type": "Apartment",
+      "starting_price_sar": "1.33M"
+    },
+    {
+      "name": "مشروع فلل إتوال",
+      "location": "King Khalid Int. Airport, North, Riyadh",
+      "type": "Villa",
+      "starting_price_sar": "4.20M"
+    },
+    {
+      "name": "Sadeem Town Villa",
+      "location": "As-Safa, Center, Riyadh",
+      "type": "Villa",
+      "starting_price_sar": "2.29M"
+    },
+    {
+      "name": "Sadeem Town Apartment",
+      "location": "As-Safa, Center, Riyadh",
+      "type": "Apartment",
+      "starting_price_sar": "954.25K"
+    }
+  ],
+  "auction_examples": [
+    {
+      "title": "عمارة سكنية تجارية 3,328م2 بحي المرسلات",
+      "location": "Al-Mursalat, North Riyadh, Riyadh",
+      "deposit_sar": 600000
+    },
+    {
+      "title": "مستودع تجاري 14,401.399م2 بحي المناخ",
+      "location": "Al-Manakh, South Riyadh, Riyadh",
+      "deposit_sar": 500000
+    }
+  ],
+  "faqs": [
+    {
+      "question": "What types of properties are available for sale in Saudi Arabia?",
+      "answer": "The supplied page lists apartments, villas, lands, buildings, floors and commercial spaces."
+    },
+    {
+      "question": "Can foreigners buy property in Saudi Arabia?",
+      "answer": "The supplied page says foreign nationals may buy subject to approval and applicable eligibility, designated-area and documentation requirements. Verify current rules with official authorities."
+    },
+    {
+      "question": "Which Saudi cities are best for real estate investment?",
+      "answer": "The supplied page names Riyadh, Jeddah, Dammam and Al Khobar."
+    },
+    {
+      "question": "How can I verify a property listing before buying?",
+      "answer": "The supplied page recommends requesting official property documents, checking municipal approvals and consulting real-estate or legal professionals where needed."
+    }
+  ],
+  "data_quality_note": "The attached listing extract shows 70,936 results on the page, but only the 21 sample listings transcribed here are included. Individual listing URLs were not included in the extract."
+}
