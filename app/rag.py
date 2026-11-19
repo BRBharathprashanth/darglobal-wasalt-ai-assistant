@@ -1,7 +1,7 @@
-
 import json
 import re
 import sqlite3
+import time
 from typing import Any
 
 import requests
@@ -12,6 +12,10 @@ from app.config import (
     OPENROUTER_MODEL,
     OPENROUTER_SITE_URL,
     OPENROUTER_SITE_NAME,
+    OPENROUTER_MAX_RETRIES,
+    OPENROUTER_RETRY_DELAY,
+    OPENROUTER_TIMEOUT,
+    OPENROUTER_MAX_TOKENS,
     SQLITE_PATH
 )
 
@@ -316,6 +320,117 @@ def retrieve(
 # 3. GENERATE ANSWER USING OPENROUTER
 # ==================================================
 
+
+
+# ==================================================
+# 3. FORMAT LOCATION-BASED WASALT PROPERTY RESULTS
+# ==================================================
+
+def _format_metadata_value(value: Any) -> str:
+    """Convert metadata values into readable text without losing details."""
+    if isinstance(value, (dict, list)):
+        return json.dumps(value, ensure_ascii=False)
+    if value is None or value == "":
+        return "Not provided"
+    return str(value)
+
+
+def _format_location_property_results(
+    matches: list[dict[str, Any]]
+) -> str | None:
+    """
+    Format complete location-matched Wasalt records locally.
+    This avoids model output limits for property searches.
+    Returns None when the matches are not all structured Wasalt records.
+    """
+    records = []
+
+    for item in matches:
+        if str(item.get("source", "")).lower() != "wasalt":
+            return None
+
+        try:
+            metadata = json.loads(item.get("content", ""))
+        except (json.JSONDecodeError, TypeError):
+            return None
+
+        if not isinstance(metadata, dict) or not metadata.get("location"):
+            return None
+
+        records.append((item, metadata))
+
+    if not records:
+        return None
+
+    property_specific_keys = {
+        "listing_type", "property_type", "property_category",
+        "bedrooms", "bathrooms", "price", "price_sar",
+        "area", "area_sqm", "size", "plot_area",
+        "built_up_area", "property_type_en"
+    }
+
+    projects = []
+    listings = []
+
+    for item, metadata in records:
+        normalized_keys = {str(key).lower() for key in metadata}
+        if normalized_keys & property_specific_keys:
+            listings.append((item, metadata))
+        else:
+            projects.append((item, metadata))
+
+    lines = [
+        f"## Wasalt property information found ({len(records)} records)",
+        "",
+        "These results come from the collected knowledge-base records. "
+        "They are not a live availability feed.",
+        ""
+    ]
+
+    def add_section(section_title: str, section_records: list) -> None:
+        if not section_records:
+            return
+
+        lines.extend([f"### {section_title}", ""])
+
+        for number, (item, metadata) in enumerate(section_records, 1):
+            source_number = next(
+                (
+                    index for index, match in enumerate(matches, 1)
+                    if match.get("id") == item.get("id")
+                ),
+                number
+            )
+
+            lines.append(
+                f"**{number}. {item.get('title') or 'Untitled record'}** "
+                f"[Source {source_number}]"
+            )
+
+            for key, value in metadata.items():
+                if str(key).lower() in {"url", "source_url"}:
+                    continue
+                label = str(key).replace("_", " ").strip().title()
+                lines.append(f"- {label}: {_format_metadata_value(value)}")
+
+            url = item.get("url", "")
+            if url:
+                lines.append(f"- Source: {url}")
+
+            lines.append("")
+
+    add_section("Projects", projects)
+    add_section("Individual property listings", listings)
+
+    lines.extend([
+        "**Important:** A record marked for sale does not confirm that it is "
+        "still available. Prices and listing details may change. Please verify "
+        "the latest status directly with Wasalt or the relevant seller."
+    ])
+
+    return "\n".join(lines)
+
+
 def answer_question(
     question: str
 ) -> dict[str, Any]:
@@ -391,6 +506,29 @@ def answer_question(
         })
 
     context = "\n\n".join(context_parts)
+
+    # Location-matched Wasalt property searches are formatted directly
+    # from the retrieved records so every match is included without
+    # depending on the free model's output-token limit.
+    property_search_terms = {
+        "property", "properties", "listing", "listings", "villa",
+        "villas", "apartment", "apartments", "land", "lands",
+        "project", "projects", "available", "sale", "for"
+    }
+    question_terms = set(tokenize(question))
+    is_property_search = bool(question_terms & property_search_terms)
+
+    if is_property_search:
+        direct_answer = _format_location_property_results(matches)
+        if direct_answer is not None:
+            print(
+                "Returning all location-matched Wasalt records "
+                "without an OpenRouter request."
+            )
+            return {
+                "answer": direct_answer,
+                "sources": sources
+            }
 
     # --------------------------------------------------
     # Check OpenRouter API key
@@ -569,7 +707,7 @@ DATASET LIMITATIONS:
 
         "temperature": 0.2,
 
-        "max_tokens": 2500
+        "max_tokens": OPENROUTER_MAX_TOKENS
 
     }
 
@@ -592,190 +730,179 @@ DATASET LIMITATIONS:
     # Bypass problematic environment proxy settings.
     session.trust_env = False
 
-    max_attempts = 2
+    # OPENROUTER_MAX_RETRIES means retries after the first request.
+    max_attempts = max(1, OPENROUTER_MAX_RETRIES + 1)
+    retryable_status_codes = {429, 500, 502, 503, 504}
+    truncation_retry_used = False
 
     try:
-
         for attempt in range(max_attempts):
-
             print(
-
                 f"Sending OpenRouter request "
                 f"(attempt {attempt + 1}/{max_attempts})..."
-
             )
 
-            response = session.post(
+            try:
+                response = session.post(
+                    "https://openrouter.ai/api/v1/chat/completions",
+                    headers=headers,
+                    json=payload,
+                    timeout=(20, OPENROUTER_TIMEOUT)
+                )
+            except requests.exceptions.Timeout:
+                if attempt < max_attempts - 1:
+                    wait_seconds = min(
+                        OPENROUTER_RETRY_DELAY * (2 ** attempt), 60
+                    )
+                    print(
+                        f"OpenRouter timed out. Retrying in "
+                        f"{wait_seconds:.1f} seconds..."
+                    )
+                    time.sleep(wait_seconds)
+                    continue
+                raise
 
-                "https://openrouter.ai/api/v1/chat/completions",
+            # Retry rate limits and temporary provider/server errors.
+            if response.status_code in retryable_status_codes:
+                if attempt < max_attempts - 1:
+                    retry_after = response.headers.get("Retry-After", "")
+                    try:
+                        wait_seconds = float(retry_after)
+                    except (TypeError, ValueError):
+                        wait_seconds = OPENROUTER_RETRY_DELAY * (2 ** attempt)
 
-                headers=headers,
-
-                json=payload,
-
-                timeout=(20, 120)
-
-            )
+                    wait_seconds = min(max(wait_seconds, 1), 60)
+                    print(
+                        f"OpenRouter returned HTTP {response.status_code}. "
+                        f"Retrying in {wait_seconds:.1f} seconds..."
+                    )
+                    time.sleep(wait_seconds)
+                    continue
 
             response.raise_for_status()
-
             data = response.json()
-
             choices = data.get("choices", [])
 
             if not choices:
-
                 raise ValueError(
-
                     f"OpenRouter returned no choices: {data}"
-
                 )
 
-            message = choices[0].get(
-
-                "message",
-
-                {}
-
-            )
-
+            choice = choices[0]
+            message = choice.get("message", {})
             answer = message.get("content")
+            finish_reason = choice.get("finish_reason")
 
-            # Handle content returned as text blocks.
+            # Some providers return content as text blocks.
             if isinstance(answer, list):
-
                 answer = "\n".join(
-
                     item.get("text", "")
-
                     for item in answer
-
                     if isinstance(item, dict)
-
                 )
 
-            if (
+            if isinstance(answer, str) and answer.strip():
+                cleaned_answer = answer.strip()
 
-                isinstance(answer, str)
+                # A non-empty answer can still be truncated by the provider.
+                if finish_reason == "length":
+                    print(
+                        "OpenRouter stopped at its output limit; "
+                        "the response may be incomplete."
+                    )
 
-                and answer.strip()
+                    if not truncation_retry_used and attempt < max_attempts - 1:
+                        truncation_retry_used = True
+                        print("Retrying once because the response was truncated...")
+                        time.sleep(min(OPENROUTER_RETRY_DELAY, 10))
+                        continue
 
-            ):
+                    cleaned_answer += (
+                        "\n\n*Note: The model reached its response limit, "
+                        "so this answer may be incomplete.*"
+                    )
 
-                print(
-                    "OpenRouter response received successfully."
-                )
-
+                print("OpenRouter response received successfully.")
                 return {
-
-                    "answer": answer.strip(),
-
+                    "answer": cleaned_answer,
                     "sources": sources
-
                 }
 
-            finish_reason = choices[0].get(
-                "finish_reason"
-            )
-
             print(
-
-                f"Empty response on attempt "
-                f"{attempt + 1}. "
+                f"OpenRouter returned an empty answer. "
                 f"Finish reason: {finish_reason}"
-
             )
 
-            # Retry once with an increased token limit.
             if attempt < max_attempts - 1:
-
-                payload["max_tokens"] = 3000
-
-                print(
-                    "Retrying with an increased token limit..."
+                wait_seconds = min(
+                    OPENROUTER_RETRY_DELAY * (2 ** attempt), 60
                 )
-
+                print(
+                    f"Retrying empty response in {wait_seconds:.1f} seconds..."
+                )
+                time.sleep(wait_seconds)
                 continue
 
         return {
-
             "answer": (
-
-                "The AI model could not generate "
-                "a complete response after two attempts. "
-                "Please try again."
-
+                "The AI model did not return a usable response after "
+                "several attempts. Please try again in a few moments."
             ),
-
             "sources": sources
-
         }
-
-    # ==================================================
-    # 6. ERROR HANDLING
-    # ==================================================
 
     except requests.exceptions.Timeout as exc:
-
-        print(
-            f"OpenRouter timeout error: {exc}"
-        )
-
+        print(f"OpenRouter timeout error: {exc}")
         return {
-
             "answer": (
-
-                "The AI model is taking too long "
-                "to respond. Please try again."
-
+                "The AI model is taking too long to respond. "
+                "Please try again."
             ),
-
             "sources": sources
-
         }
+
+    except requests.exceptions.HTTPError as exc:
+        status_code = (
+            exc.response.status_code
+            if exc.response is not None
+            else "unknown"
+        )
+        print(f"OpenRouter HTTP error ({status_code}): {exc}")
+
+        if status_code == 429:
+            message = (
+                "OpenRouter is temporarily rate-limiting requests. "
+                "Please wait a short time and try again."
+            )
+        elif status_code in (401, 403):
+            message = (
+                "OpenRouter rejected the API key or account permissions. "
+                "Check the API key configured in your environment."
+            )
+        else:
+            message = (
+                f"OpenRouter returned an HTTP error ({status_code}). "
+                "Please try again later."
+            )
+
+        return {"answer": message, "sources": sources}
 
     except requests.exceptions.RequestException as exc:
-
-        print(
-            f"OpenRouter request error: {exc}"
-        )
-
+        print(f"OpenRouter request error: {exc}")
         return {
-
-            "answer": (
-                f"OpenRouter request failed: {exc}"
-            ),
-
+            "answer": f"OpenRouter request failed: {exc}",
             "sources": sources
-
         }
 
-    except (
-
-        KeyError,
-        IndexError,
-        TypeError,
-        ValueError
-
-    ) as exc:
-
-        print(
-            f"OpenRouter response error: {exc}"
-        )
-
+    except (KeyError, IndexError, TypeError, ValueError) as exc:
+        print(f"OpenRouter response error: {exc}")
         return {
-
             "answer": (
-
                 "The AI model returned an invalid response. "
                 "Please try again."
-
             ),
-
             "sources": sources
-
         }
 
     finally:
-
         session.close()
